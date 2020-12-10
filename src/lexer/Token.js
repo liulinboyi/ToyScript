@@ -24,49 +24,85 @@ class Token {
     get type() {
         return this._type
     }
+    get getValue() {
+        return this._value
+    }
     get value() {
         return this._value
     }
-    get isVariable() {
-        return this._type.value === TokenType.VARIABLE.value
+    get isValue() {
+        return this.isScalar || this.isVariable;
     }
-    get isScaler() {
-        return this._type.value === TokenType.BOOLEAN.value ||
-            this._type.value === TokenType.BRACKET.value ||
-            this._type.value === TokenType.FLOAT.value ||
-            this._type.value === TokenType.INTERGER.value
+    get isVariable() {
+        return this._type === TokenType.VARIABLE
+    }
+    get isScalar() {
+        return this._type === TokenType.BOOLEAN ||
+            this._type === TokenType.STRING ||
+            this._type === TokenType.FLOAT ||
+            this._type === TokenType.INTEGER
     }
     toString() {
         return `type ${this._type.type}, value ${this._value}`
     }
 
-    // 工厂方法
     static makeVarOrKeyword(it) {
-        let s = ''
+        let s = "";
         let firstToken = it.peek()
         while (it.hasNext()) {
-            const c = it.peek() // 拿一个字符出来
-            if (AlphabetHelper.isLiteral(c)) {
-                s += c
-            } else {
-                break
-            }
+            const c = it.peek();
 
+            if (AlphabetHelper.isLiteral(c)) {
+                s += c;
+            } else {
+                break;
+            }
             // 不变式
-            it.next()
+            it.next();
         }
-        // 关键字
+
         if (keyWords.has(s)) {
-            return new Token(TokenType.KEYWORD, s)
+            return new Token(TokenType.KEYWORD, s);
         }
-        if (s === 'true' || s === 'false') {
-            return new Token(TokenType.BOOLEAN, s)
+
+        if (s == "true" || s == "false") {
+            return new Token(TokenType.BOOLEAN, s);
         }
+
         if (AlphabetHelper.isNumber(firstToken)) {
             throw LexicalException.fromChar(s)
         }
-        return new Token(TokenType.VARIABLE, s)
+
+        return new Token(TokenType.VARIABLE, s);
     }
+
+    // 工厂方法
+    // static makeVarOrKeyword(it) {
+    //     let s = ''
+    //     let firstToken = it.peek()
+    //     while (it.hasNext()) {
+    //         const c = it.peek() // 拿一个字符出来
+    //         if (AlphabetHelper.isLiteral(c)) {
+    //             s += c
+    //         } else {
+    //             break
+    //         }
+
+    //         // 不变式
+    //         it.next()
+    //     }
+    //     // 关键字
+    //     if (keyWords.has(s)) {
+    //         return new Token(TokenType.KEYWORD, s)
+    //     }
+    //     if (s === 'true' || s === 'false') {
+    //         return new Token(TokenType.BOOLEAN, s)
+    //     }
+    //     if (AlphabetHelper.isNumber(firstToken)) {
+    //         throw LexicalException.fromChar(s)
+    //     }
+    //     return new Token(TokenType.VARIABLE, s)
+    // }
     // 提取字符串
     static makeString(it) {
         let s = ""
@@ -296,81 +332,152 @@ class Token {
     }
 
     static makeNumber(it) {
-        let state = 0
-        let s = ''
+        let state = 0;
+        let s = "";
+
         while (it.hasNext()) {
-            let lookhead = it.peek()
+            let lookahead = it.peek();
 
             switch (state) {
                 case 0:
-                    if (lookhead === '0') {
-                        state = 1
-                    } else if (AlphabetHelper.isNumber(lookhead)) {
-                        state = 2
-                    } else if (lookhead === "+" || lookhead === "-") {
-                        state = 3
-                    } else if (lookhead === ".") {
-                        state = 5
+                    if (lookahead == "0") {
+                        state = 1;
+                    } else if (AlphabetHelper.isNumber(lookahead)) {
+                        state = 2;
+                    } else if (lookahead == "+" || lookahead == "-") {
+                        state = 3;
+                    } else if (lookahead == ".") {
+                        state = 5;
                     }
-                    break
+                    break;
                 case 1:
-                    if (lookhead === '0') {
-                        state = 1 // 继续等于0，不会发生变化
-                    } else if (lookhead === '.') {
-                        state = 4 // 累计浮点数状态
+                    if (lookahead == "0") {
+                        state = 1;
+                    } else if (lookahead == ".") {
+                        state = 4;
+                    } else if (AlphabetHelper.isNumber(lookahead)) {
+                        state = 2;
                     } else {
-                        return new Token(TokenType.INTERGER, s)
+                        return new Token(TokenType.INTEGER, s);
                     }
-                    break
+                    break;
                 case 2:
-                    if (AlphabetHelper.isNumber(lookhead)) {
-                        state = 2
-                    } else if (lookhead === '.') {
-                        state = 4 // 累计浮点数状态
+                    if (AlphabetHelper.isNumber(lookahead)) {
+                        state = 2;
+                    } else if (lookahead == ".") {
+                        state = 4;
                     } else {
-                        return new Token(TokenType.INTERGER, s)
+                        return new Token(TokenType.INTEGER, s);
                     }
-                    break
+                    break;
                 case 3:
-                    if (AlphabetHelper.isNumber(lookhead)) {
-                        state = 2
-                    } else if (lookhead === '.') {
-                        state = 5
+                    if (AlphabetHelper.isNumber(lookahead)) {
+                        state = 2;
+                    } else if (lookahead == ".") {
+                        state = 5;
                     } else {
-                        throw new LexicalException(lookhead)
+                        throw LexicalException.fromChar(lookahead);
                     }
-                    break
+                    break;
                 case 4:
-                    if (lookhead === '.') {
-                        throw new LexicalException(lookhead)
-                    } else if (AlphabetHelper.isNumber(lookhead)) {
-                        state = 20
+                    if (lookahead == ".") {
+                        throw LexicalException.fromChar(lookahead);
+                    } else if (AlphabetHelper.isNumber(lookahead)) {
+                        state = 4;
                     } else {
-                        return new Token(TokenType.FLOAT, s)
+                        return new Token(TokenType.FLOAT, s);
                     }
-                    break
+                    break;
                 case 5:
-                    if (AlphabetHelper.isNumber(lookhead)) {
-                        state = 20
+                    if (AlphabetHelper.isNumber(lookahead)) {
+                        state = 4;
                     } else {
-                        throw new LexicalException(lookhead)
+                        throw LexicalException.fromChar(lookahead);
                     }
-                    break
-                case 20:
-                    if (AlphabetHelper.isNumber(lookhead)) {
-                        state = 20
-                    } else if (lookhead === '.') {
-                        throw new LexicalException(lookhead)
-                    } else {
-                        return new Token(TokenType.FLOAT, s)
-                    }
+                    break;
             }
-            s += lookhead
-            it.next()
-
-        }
-        throw new LexicalException("Unexpected error")
+            s += lookahead;
+            it.next();
+        } // end while
+        throw new LexicalException("Unexpected error");
     }
+
+    // static makeNumber(it) {
+    //     let state = 0
+    //     let s = ''
+    //     while (it.hasNext()) {
+    //         let lookhead = it.peek()
+
+    //         switch (state) {
+    //             case 0:
+    //                 if (lookhead === '0') {
+    //                     state = 1
+    //                 } else if (AlphabetHelper.isNumber(lookhead)) {
+    //                     state = 2
+    //                 } else if (lookhead === "+" || lookhead === "-") {
+    //                     state = 3
+    //                 } else if (lookhead === ".") {
+    //                     state = 5
+    //                 }
+    //                 break
+    //             case 1:
+    //                 if (lookhead === '0') {
+    //                     state = 1 // 继续等于0，不会发生变化
+    //                 } else if (lookhead === '.') {
+    //                     state = 4 // 累计浮点数状态
+    //                 } else {
+    //                     return new Token(TokenType.INTEGER, s)
+    //                 }
+    //                 break
+    //             case 2:
+    //                 if (AlphabetHelper.isNumber(lookhead)) {
+    //                     state = 2
+    //                 } else if (lookhead === '.') {
+    //                     state = 4 // 累计浮点数状态
+    //                 } else {
+    //                     return new Token(TokenType.INTEGER, s)
+    //                 }
+    //                 break
+    //             case 3:
+    //                 if (AlphabetHelper.isNumber(lookhead)) {
+    //                     state = 2
+    //                 } else if (lookhead === '.') {
+    //                     state = 5
+    //                 } else {
+    //                     throw new LexicalException(lookhead)
+    //                 }
+    //                 break
+    //             case 4:
+    //                 if (lookhead === '.') {
+    //                     throw new LexicalException(lookhead)
+    //                 } else if (AlphabetHelper.isNumber(lookhead)) {
+    //                     state = 20
+    //                 } else {
+    //                     return new Token(TokenType.FLOAT, s)
+    //                 }
+    //                 break
+    //             case 5:
+    //                 if (AlphabetHelper.isNumber(lookhead)) {
+    //                     state = 20
+    //                 } else {
+    //                     throw new LexicalException(lookhead)
+    //                 }
+    //                 break
+    //             case 20:
+    //                 if (AlphabetHelper.isNumber(lookhead)) {
+    //                     state = 20
+    //                 } else if (lookhead === '.') {
+    //                     throw new LexicalException(lookhead)
+    //                 } else {
+    //                     return new Token(TokenType.FLOAT, s)
+    //                 }
+    //         }
+    //         s += lookhead
+    //         it.next()
+
+    //     }
+    //     throw new LexicalException("Unexpected error")
+    // }
 }
 
 module.exports = Token

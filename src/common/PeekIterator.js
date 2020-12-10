@@ -16,7 +16,7 @@ class PeekIterator {
     peek() {
         // 如果this.stackPutBacks有值，则返回this.stackPutBacks的头元素，最左边的元素
         if (this.stackPutBacks.length > 0) {
-            return this.stackPutBacks.head
+            return this.stackPutBacks.tail
         }
         // 相当于
         const val = this.next()
@@ -47,8 +47,8 @@ class PeekIterator {
                 const tmp = this.endToken
                 // 清空
                 this.endToken = null
-                return tmp
-                // 暂不处理
+                // return tmp
+                val = tmp
             }
         }
         // 处理缓存

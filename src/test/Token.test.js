@@ -154,11 +154,11 @@ describe('test Token', () => {
             const token = Token.makeNumber(it)
             const regx = test.split(/[ |*]/); // 字符串用空格或乘号隔开
             const expected = regx[0]
-            // let isIntergerRegx = /[0-9]+\.[0-9]*|[0-9]*\.[0-9]+/
+            // let isINTEGERRegx = /[0-9]+\.[0-9]*|[0-9]*\.[0-9]+/
             let isFloatRegx = /[0-9]*\.[0-9]+|[0-9]+\.[0-9]*/
             let isFloat = isFloatRegx.test(expected)
             assert.equal(token.value, expected)
-            assert.equal(token.type, isFloat ? TokenType.FLOAT : TokenType.INTERGER)
+            assert.equal(token.type, isFloat ? TokenType.FLOAT : TokenType.INTEGER)
         }
     })
 })

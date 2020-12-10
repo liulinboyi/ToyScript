@@ -4,7 +4,7 @@ const TokenType = {
     VARIABLE: new Enum("VARIABLE", 2),
     OPERATOR: new Enum("OPERATOR", 3),
     BRACKET: new Enum("BRACKET", 4),
-    INTERGER: new Enum("INTERGER", 5),
+    INTEGER: new Enum("INTEGER", 5),
     FLOAT: new Enum("FLOAT", 6),
     BOOLEAN: new Enum("BOOLEAN", 7),
     STRING: new Enum("STRING", 8),
