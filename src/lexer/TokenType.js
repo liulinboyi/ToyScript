@@ -7,6 +7,7 @@ const TokenType = {
     INTERGER: new Enum("INTERGER", 5),
     FLOAT: new Enum("FLOAT", 6),
     BOOLEAN: new Enum("BOOLEAN", 7),
+    STRING: new Enum("STRING", 8),
 }
 
 module.exports = TokenType
