@@ -1,0 +1,82 @@
+{
+    "children": [{
+        "children": [],
+        "parent": "[Circular root]",
+        "lexeme": {
+            "_type": {
+                "type": "INTEGER",
+                "value": 5
+            },
+            "_value": "1"
+        },
+        "type": {
+            "type": "SCALAR",
+            "value": 11
+        },
+        "label": "1"
+    }, {
+        "children": [{
+            "children": [],
+            "parent": "[Circular 1]",
+            "lexeme": {
+                "_type": "[Circular _type]",
+                "_value": "2"
+            },
+            "type": "[Circular type]",
+            "label": "2"
+        }, {
+            "children": [{
+                "children": [],
+                "parent": "[Circular 1]",
+                "lexeme": {
+                    "_type": "[Circular _type]",
+                    "_value": "3"
+                },
+                "type": "[Circular type]",
+                "label": "3"
+            }, {
+                "children": [],
+                "parent": {
+                    "children": [],
+                    "parent": null,
+                    "lexeme": null,
+                    "type": null,
+                    "label": null
+                },
+                "lexeme": {
+                    "_type": "[Circular _type]",
+                    "_value": "4"
+                },
+                "type": "[Circular type]",
+                "label": "4"
+            }],
+            "parent": null,
+            "lexeme": {
+                "_type": {
+                    "type": "OPERATOR",
+                    "value": 3
+                },
+                "_value": "+"
+            },
+            "type": {
+                "type": "BINARY_EXPR",
+                "value": 2
+            },
+            "label": "+"
+        }],
+        "parent": null,
+        "lexeme": {
+            "_type": "[Circular _type]",
+            "_value": "+"
+        },
+        "type": "[Circular type]",
+        "label": "+"
+    }],
+    "parent": null,
+    "lexeme": {
+        "_type": "[Circular _type]",
+        "_value": "+"
+    },
+    "type": "[Circular type]",
+    "label": "+"
+}

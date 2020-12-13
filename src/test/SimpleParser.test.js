@@ -1,8 +1,10 @@
+const fs = require('fs')
+const path = require('path')
 const arrayToGenerator = require('../common/arrayToGenerator')
 const Lexer = require('../lexer/Lexer')
 const SimpleParser = require('../parser/SimpleParser.js')
 const PeekTokenIterator = require('../parser/util/PeekTokenIterator')
-
+const stringify = require('../parser/util/stringfy')
 const { assert } = require('chai')
 
 describe("SimpleParser test", () => {
@@ -35,5 +37,7 @@ describe("SimpleParser test", () => {
 
 
         expr.print()
+        let path_ = path.join(__dirname, '/output/ast.json')
+        fs.writeFileSync(path_, stringify(expr));
     })
 })
